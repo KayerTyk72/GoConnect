@@ -7,7 +7,6 @@ import HomeScreen from './screens/HomeScreen';
 import ProfileScreen from './screens/ProfileSceen';
 import SettingScreen from './screens/SettingScreen';
 import LoginScreen from './screens/LoginScreen';
-import { AuthProvider } from './components/Auth/AuthContext';
 import ProfileScreen1 from './screens/ProfileSceen1';
 
 const Stack = createNativeStackNavigator();
@@ -35,14 +34,12 @@ function MainBottomTabs() {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen options={{ headerShown: false }}  name="MainBottomTabs" component={MainBottomTabs}  />
-          <Stack.Screen name="Login" component={LoginScreen}  />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </AuthProvider>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen options={{ headerShown: false }}  name="MainBottomTabs" component={MainBottomTabs}  />
+        <Stack.Screen name="Login" component={LoginScreen}  />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
