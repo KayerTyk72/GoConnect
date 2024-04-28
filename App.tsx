@@ -8,6 +8,7 @@ import ProfileScreen from './screens/ProfileSceen';
 import SettingScreen from './screens/SettingScreen';
 import LoginScreen from './screens/LoginScreen';
 import ProfileScreen1 from './screens/ProfileSceen1';
+import EditOrCreateProfileScreen from './screens/User/EditOrCreateProfileScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -38,6 +39,7 @@ const App: React.FC = () => {
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }}  name="MainBottomTabs" component={MainBottomTabs}  />
         <Stack.Screen name="Login" component={LoginScreen}  />
+        <Stack.Screen name="EditOrCreateProfile" component={EditOrCreateProfileScreen}  />
       </Stack.Navigator>
     </NavigationContainer>
   );
