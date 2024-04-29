@@ -60,22 +60,25 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
     }
   };
 
-  const backgroundColor = '#fff';
   return (
-    <View style={[styles.container, {backgroundColor}]}>
-      <Text>Name:</Text>
+    <View style={[styles.container, {backgroundColor : '#fff'}]}>
+      <Text style={{marginBottom: 5}}>Name:</Text>
       <TextInput
+        style={styles.input}
         value={name}
         onChangeText={text => setName(text)}
         placeholder="Enter name"
       />
-      <Text>Description:</Text>
+      <Text style={{marginBottom: 5}}>Description:</Text>
       <TextInput
+        style={[styles.input, {marginBottom: 15}]}
         value={description}
         onChangeText={text => setDescription(text)}
         placeholder="Enter description"
       />
-      <Button title="Save Profile" onPress={handleSaveProfile} />
+      <TouchableOpacity style={[styles.button, { backgroundColor: '#4b94f8' }]} onPress={handleSaveProfile}>
+        <Text style={styles.buttonText}>Save Profile</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -84,6 +87,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20
+  },
+  input: {
+    padding: 10,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical:10,
+    marginBottom: 10,
+    width: '100%',
+    backgroundColor: '#ddd',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  button: {
+    padding: 10,
+    borderRadius: 5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    marginRight: 5,
+    marginTop: 5,
+    marginBottom: 10
   },
 });
 

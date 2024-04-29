@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
   },
   input: {
     borderWidth: 1,
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 10,
     width: '80%',
+    backgroundColor: '#fff',
   },
   button: {
     padding: 10,

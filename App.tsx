@@ -9,6 +9,7 @@ import SettingScreen from './screens/SettingScreen';
 import LoginScreen from './screens/LoginScreen';
 import ProfileScreen1 from './screens/ProfileSceen1';
 import EditOrCreateProfileScreen from './screens/User/EditOrCreateProfileScreen';
+import { Image } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -25,10 +26,23 @@ function ProfileTabs() {
 
 function MainBottomTabs() {
   return (
-    <Tab.Navigator >
+    <Tab.Navigator 
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconUri;
+          if (route.name === 'Home') {
+            iconUri = 'https://img.icons8.com/ios/50/home--v1.png';
+          } else if (route.name === 'Profile') {
+            iconUri = 'https://img.icons8.com/ios/50/user-male--v2.png';
+          } else{
+            iconUri = 'https://img.icons8.com/ios/50/settings--v2.png';
+          }
+          return <Image source={{ uri: iconUri }} style={{ width: size, height: size }} />;
+        },
+      })}>
       <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Tab.Screen name="Profile" component={ProfileTabs} options={{ headerShown: false }}/>
-      <Tab.Screen name="Setting" component={SettingScreen}  options={{ headerShown: false }}/>
+      <Tab.Screen name="Setting" component={SettingScreen} />
     </Tab.Navigator>
   );
 }

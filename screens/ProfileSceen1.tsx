@@ -68,11 +68,11 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 130,
+    height: 130,
   },
   box: {
-    padding: 20,
+    padding: 10,
     marginTop: 5,
     marginBottom: 5,
     backgroundColor: 'white',
@@ -85,11 +85,9 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   title: {
-    fontSize: 24,
     color: '#151515',
   },
   description: {
-    fontSize: 20,
     color: '#646464',
     paddingVertical:10
   },
@@ -97,18 +95,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   button: {
-    height: 35,
+    height: 22,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
-    width: 50,
+    width: 40,
     marginRight: 5,
     marginTop: 5,
   },
   icon: {
-    width: 20,
-    height: 20,
+    width: 10,
+    height: 10,
   },
   view: {
     backgroundColor: '#eee',

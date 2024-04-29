@@ -108,25 +108,25 @@ const boxShadow: any = Platform.select({
 
 const styles =  StyleSheet.create({
   searchinput: {
-    backgroundColor: '#d3d5d5',
+    backgroundColor: '#ddd',
     borderRadius: 50,
-    padding: 15,
-    marginHorizontal:10,
-    marginBottom:10
+    paddingHorizontal: 15,
+    padding: 6,
+    marginHorizontal:8,
+    marginBottom:12
   },
   itemcontainer: {
-    height: 300,
     marginBottom: 18,
     backgroundColor: '#eee',
-    borderRadius: 24,
+    borderRadius: 20,
     marginHorizontal: 16,
     ...boxShadow,
   },
   imageContainer: {flex: 1},
   image: {
     flex: 1,
-    borderRadius: 24,
-    height: 300,
+    borderRadius: 20,
+    height: 200,
   },
   titleContainer: {
     position: 'absolute',
@@ -134,23 +134,22 @@ const styles =  StyleSheet.create({
     width: '100%',
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
-    height: 160,
     paddingLeft: 16,
     paddingRight: 10,
     justifyContent: 'flex-end',
     alignItems: 'flex-start',
   },
   text: {
-    fontSize: 28,
+    fontSize: 14,
     fontWeight: '600',
-    lineHeight: 30,
+    lineHeight: 20,
     color: '#fff',
-    paddingBottom: 24,
+    marginBottom: 24
   },
   timestamp: {
     position: 'absolute',
     color: '#eee',
-    fontSize: 22,
+    fontSize: 12,
     fontWeight: '300',
     right: 16,
     bottom: 8,
@@ -158,12 +157,11 @@ const styles =  StyleSheet.create({
   container: {
     flex: 1,
     flexGrow: 1,
-    paddingTop: 20,
+    paddingTop: 12,
   },
   list: {
     flex: 1,
     flexGrow: 1,
-    paddingVertical: 8,
   },
 });
 
