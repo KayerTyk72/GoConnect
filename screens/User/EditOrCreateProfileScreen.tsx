@@ -1,14 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Button, Text, TouchableOpacity, Image, TextInput, Alert } from 'react-native';
+import React, { useEffect, useState, } from 'react';
+import { View, StyleSheet, Button, Text, TouchableOpacity, Image, TextInput, Alert, ScrollView } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import { launchImageLibrary } from 'react-native-image-picker'; 
 import { Profile } from '../../models/Profile';
 
+
+
+
 const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+  const [editable, setEditable] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [image, setImage] = useState<string >(); 
   const [isCreate, setIsCreate] = useState(true);
   const [userId, setUserId] = useState('');
+  const [hometown,setHomeTown] = useState('');
+  const [major,setMajor] = useState('');
+  const [school,setScholl] = useState('');
+  const [ethinicity,setEthinicity] = useState('');
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -21,10 +31,12 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
   }, []);
 
   useEffect(() => {
-    loadProfileData(userId);
+    if (userId) {
+      loadProfileData(userId);
+    }
   }, [userId]);
 
-  const loadProfileData = async (userId :string) => {
+  const loadProfileData = async (userId: string) => {
     try {
       const profileRef = firestore().collection('profiles').doc(userId);
       const snapshot = await profileRef.get();
@@ -32,6 +44,11 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
         const data = snapshot.data() as Profile;
         setName(data.name);
         setDescription(data.description);
+        setImage(data.image); 
+        setEthinicity(data.ethinicity);
+        setHomeTown(data.hometown);
+        setMajor(data.major);
+        setScholl(data.school);
         setIsCreate(false);
       }
     } catch (error) {
@@ -41,18 +58,19 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
 
   const handleSaveProfile = async () => {
     try {
-      if(isCreate){
-        await firestore().collection('profiles').doc(userId).set({
-          name: name,
-          description: description,
-          is_approved: false
-        }, { merge: true }); 
-      } else
-      {
-        await firestore().collection('profiles').doc(userId).update({
-          name: name,
-          description: description
-        }); 
+      let profileData = {
+        name: name,
+        description: description,
+        image: image ,
+        ethinicity:ethinicity,
+        hometown:hometown,
+        school:school,
+        major:major,
+      };
+      if (isCreate) {
+        await firestore().collection('profiles').doc(userId).set(profileData, { merge: true });
+      } else {
+        await firestore().collection('profiles').doc(userId).update(profileData);
       }
       Alert.alert('Profile updated successfully!');
     } catch (error) {
@@ -60,26 +78,96 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
     }
   };
 
+  // Hàm để chọn hình ảnh từ thư viện
+  const chooseImage = () => {
+    launchImageLibrary({ mediaType: 'photo' }, response => {
+      if (response && response.assets && response.assets.length > 0) { 
+        const uri = response.assets[0].uri;
+        setImage(uri); 
+      }
+    });
+  };
+  
   return (
-    <View style={[styles.container, {backgroundColor : '#fff'}]}>
-      <Text style={{marginBottom: 5}}>Name:</Text>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+    <View style={[styles.container, { backgroundColor: '#fff' }]}>
+      {/* Profile Image */}
+      {image && <Image source={{ uri: image }} style={{ width: 100, height: 120 ,alignSelf:'center'}} />}
+      <TouchableOpacity style={[styles.button, { backgroundColor: '#4b94f8',width:'30%',alignSelf:'center', }]} onPress={chooseImage}>
+        <Text style={styles.buttonText}>Choose Image</Text>
+      </TouchableOpacity>
+      {/* Profile Name */}
+      <Text style={{ marginBottom: 5 }}>Name:</Text>
       <TextInput
         style={styles.input}
         value={name}
         onChangeText={text => setName(text)}
         placeholder="Enter name"
+        editable={editable}
       />
-      <Text style={{marginBottom: 5}}>Description:</Text>
+      <Text/>
+      {/* Profile DayOfBirth
+      {/* Profile homtown */}
+      <Text style={{marginBottom:5}}>Quê quán:</Text>
       <TextInput
-        style={[styles.input, {marginBottom: 15}]}
+        style={styles.input}
+        value={hometown}
+        onChangeText={text => setHomeTown(text)}
+        placeholder="Quê quán"
+        editable={editable}
+      />
+      {/* Profile ethinicity */}
+      <Text style={{marginBottom:5}}>Sắc tộc:</Text>
+      <TextInput
+        style={styles.input}
+        value={ethinicity}
+        onChangeText={text => setEthinicity(text)}
+        placeholder="Sắc tộc"
+        editable={editable}
+      />
+      {/* Profile school */}
+      <Text style={{marginBottom:5}}>Trường học:</Text>
+      <TextInput
+        style={styles.input}
+        value={school}
+        onChangeText={text => setScholl(text)}
+        placeholder="Trường học"
+        editable={editable}
+      />
+      {/* Profile major */}
+      <Text style={{marginBottom:5}}>Chuyên ngành:</Text>
+      <TextInput
+        style={styles.input}
+        value={major}
+        onChangeText={text => setMajor(text)}
+        placeholder="Chuyên ngành"
+        editable={editable}
+      />
+      {/* Profile Description */}
+      <Text style={{ marginBottom: 5 }}>Description:</Text>
+      <TextInput
+        multiline={true}
+        numberOfLines={5}
+        maxLength={500}
+        style={[styles.input, { marginBottom: 15, }]}
         value={description}
         onChangeText={text => setDescription(text)}
         placeholder="Enter description"
+        textAlignVertical='top'
+        textAlign='left'
+        editable={editable}
       />
-      <TouchableOpacity style={[styles.button, { backgroundColor: '#4b94f8' }]} onPress={handleSaveProfile}>
-        <Text style={styles.buttonText}>Save Profile</Text>
-      </TouchableOpacity>
+      <Button
+        title={editable ? 'Save' : 'Edit'}
+        onPress={() =>{if (editable) {
+          handleSaveProfile();
+        }
+        setEditable(prevState => !prevState);
+            }      
+          }
+      />
     </View>
+    </ScrollView>
   );
 };
 
@@ -92,7 +180,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     paddingHorizontal: 10,
-    paddingVertical:10,
+    paddingVertical: 10,
     marginBottom: 10,
     width: '100%',
     backgroundColor: '#ddd',

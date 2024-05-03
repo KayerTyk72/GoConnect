@@ -38,7 +38,7 @@ const ProfileScreen: React.FC = () => {
       renderItem={({ item }) => {
         return (
           <View style={styles.box}>
-            <Image style={styles.image} source={{ uri: 'https://img.freepik.com/free-photo/university-study-abroad-lifestyle-concept-satisfied-happy-asian-male-student-glasses-shirt-showing-thumbs-up-approval-likes-studying-college-holding-laptop-backpack_1258-55849.jpg?t=st=1714370633~exp=1714374233~hmac=2b60da548599f9fca05ffe8a3471ed74092e83d303870ccac40327f47eedab1d&w=360' }} />
+            <Image style={styles.image} source={{ uri:item.image }} />
             <View style={styles.boxContent}>
               <Text style={styles.title}>{item.name}</Text>
               <Text style={styles.description}>{item.description}</Text>
