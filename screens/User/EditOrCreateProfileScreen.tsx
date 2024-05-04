@@ -4,9 +4,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { launchImageLibrary } from 'react-native-image-picker'; 
 import { Profile } from '../../models/Profile';
-
-
-
+import storage from '@react-native-firebase/storage';
 
 const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [editable, setEditable] = useState(false);
@@ -14,6 +12,7 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
   const [description, setDescription] = useState('');
   const [image, setImage] = useState<string >(); 
   const [isCreate, setIsCreate] = useState(true);
+  const [isChangeImage, setIsChangeImage] = useState(false);
   const [userId, setUserId] = useState('');
   const [hometown,setHomeTown] = useState('');
   const [major,setMajor] = useState('');
@@ -60,13 +59,25 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
     try {
       let profileData = {
         name: name,
+        image : image,
         description: description,
-        image: image ,
         ethinicity:ethinicity,
         hometown:hometown,
         school:school,
         major:major,
       };
+
+      // upload image lên storage
+      if(isChangeImage && image){
+        const timestamp = new Date().getTime();
+        const fileName = `${timestamp}.jpg`;
+        const imageRef = storage().ref('images').child(fileName);
+        await imageRef.putFile(image);
+        const imageUrl = await imageRef.getDownloadURL();
+        profileData.image = imageUrl;
+      }
+
+      // lưu dữ liệu
       if (isCreate) {
         await firestore().collection('profiles').doc(userId).set(profileData, { merge: true });
       } else {
@@ -84,6 +95,7 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
       if (response && response.assets && response.assets.length > 0) { 
         const uri = response.assets[0].uri;
         setImage(uri); 
+        setIsChangeImage(true);
       }
     });
   };
