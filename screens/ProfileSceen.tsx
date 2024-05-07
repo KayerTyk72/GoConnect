@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, useColorScheme, RefreshControl } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, useColorScheme, RefreshControl, Touchable, Alert } from 'react-native';
 import { Profile } from '../models/Profile';
 import firestore from '@react-native-firebase/firestore';
 
-const ProfileScreen: React.FC = () => {
+const ProfileScreen: React.FC <{ navigation: any }> = ({ navigation }) => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -12,76 +12,59 @@ const ProfileScreen: React.FC = () => {
   }, []);
 
   const loadProfiles = async () => {
-    const profilesSnapshot = await firestore().collection('profiles').get();
-    const profilesData = profilesSnapshot.docs.map(doc => doc.data() as Profile);
-    setProfiles(profilesData);
+    try {
+      const profilesSnapshot = await firestore().collection('profiles').get();
+      const profilesData = profilesSnapshot.docs.map(doc => {
+        const profile = doc.data() as Profile;
+        profile.Id = doc.id; // Assigning document name as userId
+        return profile;
+      });
+      setProfiles(profilesData);
+    } catch (error) {
+      console.error("Error fetching profiles:", error);
+    }
   };
 
-  const onRefresh = () => {
-    setRefreshing(true); // Kích hoạt trạng thái refreshing
-
-    // Thực hiện load lại dữ liệu
-    loadProfiles();
-
-    // Kết thúc refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadProfiles();
     setRefreshing(false);
   };
 
+  const handleProfileInfomation = (userId: string) => {
+    navigation.navigate('ProfileInfomation', { profileId: userId });
+  };
 
   const backgroundColor = useColorScheme() === 'dark' ? '#000' : '#fff';
   return (
     <View style={[styles.container]}>
-    <FlatList
-      
-      data={profiles}
-      keyExtractor={(item, index) => index.toString()}
-      renderItem={({ item }) => {
-        return (
-          <View style={styles.box}>
-            <Image style={styles.image} source={{ uri:item.image }} />
-            <View style={styles.boxContent}>
-              <Text style={styles.title}>{item.name}</Text>
-              <Text style={styles.description}>{item.description}</Text>
-              <View style={styles.buttons}>
-                <TouchableOpacity
-                  style={[styles.button, styles.view]}
-                  >
-                  <Image
-                    style={styles.icon}
-                    source={{ uri: 'https://img.icons8.com/color/70/000000/filled-like.png' }}
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.button, styles.profile]}
-                  >
-                  <Image
-                    style={styles.icon}
-                    source={{ uri: 'https://img.icons8.com/color/70/000000/cottage.png' }}
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={[styles.button, styles.message]}
-                  >
-                  <Image
-                    style={styles.icon}
-                    source={{ uri: 'https://img.icons8.com/color/70/000000/plus.png' }}
-                  />
-                </TouchableOpacity>
+      <FlatList
+        data={profiles}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => handleProfileInfomation(item.Id)}>
+            <View style={styles.box}>
+              <Image style={styles.image} source={{ uri:item.image }} />
+              <View style={styles.boxContent}>
+                <Text style={styles.title}>{item.name}</Text>
+                <Text style={styles.description}>{item.description}</Text>
+                <View style={styles.buttons}>
+                  <TouchableOpacity style={[styles.button, styles.view]}>
+                    <Image style={styles.icon} source={{ uri: 'https://img.icons8.com/color/70/000000/filled-like.png' }} />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.button, styles.profile]}>
+                    <Image style={styles.icon} source={{ uri: 'https://img.icons8.com/color/70/000000/cottage.png' }} />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.button, styles.message]}>
+                    <Image style={styles.icon} source={{ uri: 'https://img.icons8.com/color/70/000000/plus.png' }} />
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-          
-        )
-      }}
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
-      }
-    />
+          </TouchableOpacity>
+        )}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      />
     </View>
   );
 };
@@ -114,7 +97,7 @@ const styles = StyleSheet.create({
   },
   description: {
     color: '#646464',
-    paddingVertical:10
+    paddingVertical: 10,
   },
   buttons: {
     flexDirection: 'row',
@@ -142,7 +125,6 @@ const styles = StyleSheet.create({
   message: {
     backgroundColor: '#228B22',
   },
-})
-
+});
 
 export default ProfileScreen;

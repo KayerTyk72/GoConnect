@@ -1,4 +1,5 @@
 export type Profile = {
+    Id: string;
     name: string; // Tên
     description: string; // Mô tả
     image:string; // Ảnh 

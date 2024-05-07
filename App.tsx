@@ -9,7 +9,9 @@ import SettingScreen from './screens/SettingScreen';
 import LoginScreen from './screens/LoginScreen';
 import ProfileScreen1 from './screens/ProfileSceen1';
 import EditOrCreateProfileScreen from './screens/User/EditOrCreateProfileScreen';
+
 import { Image } from 'react-native';
+import ProfileInfomation from './screens/Profile/FrofileInfomation';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -54,6 +56,7 @@ const App: React.FC = () => {
         <Stack.Screen options={{ headerShown: false }}  name="MainBottomTabs" component={MainBottomTabs}  />
         <Stack.Screen name="Login" component={LoginScreen}  />
         <Stack.Screen name="EditOrCreateProfile" component={EditOrCreateProfileScreen}  />
+        <Stack.Screen name="ProfileInfomation" component={ProfileInfomation}  />
       </Stack.Navigator>
     </NavigationContainer>
   );

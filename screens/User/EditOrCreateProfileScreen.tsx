@@ -82,6 +82,7 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
         await firestore().collection('profiles').doc(userId).set(profileData, { merge: true });
       } else {
         await firestore().collection('profiles').doc(userId).update(profileData);
+        
       }
       Alert.alert('Profile updated successfully!');
     } catch (error) {
