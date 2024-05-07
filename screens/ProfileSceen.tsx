@@ -31,8 +31,8 @@ const ProfileScreen: React.FC <{ navigation: any }> = ({ navigation }) => {
     setRefreshing(false);
   };
 
-  const handleProfileInfomation = (userId: string) => {
-    navigation.navigate('ProfileInfomation', { profileId: userId });
+  const handleProfileInfomation = (profileId: string) => {
+    navigation.navigate('ProfileInfomation', { profileId: profileId });
   };
 
   const backgroundColor = useColorScheme() === 'dark' ? '#000' : '#fff';
