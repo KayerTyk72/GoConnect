@@ -3,38 +3,34 @@ import { View, StyleSheet, Button, Text, TouchableOpacity, Image } from 'react-n
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { User } from '../models/user';
+import { useAuth } from '../contexts/AuthContext';
 
 const SettingScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const [user, setUser] = useState<User | null>(null);
+    const { logout, authUser } = useAuth(); 
 
     useEffect(() => {
-        const unsubscribe = auth().onAuthStateChanged(authUser => {
-            if (authUser) {
-                // Nếu người dùng đã đăng nhập, lấy thông tin người dùng từ Firestore
-                firestore().collection('users').doc(authUser.uid).get().then(doc => {
-                if (doc.exists) {
-                    setUser(doc.data() as User); // Chú ý: Kiểm tra null trước khi sử dụng
-                } else {
-                    console.log('No such document!');
-                }
-                }).catch(error => {
-                console.log('Error getting document:', error);
-                });
-            } else {
-                setUser(null); // Người dùng không đăng nhập
-            }
+      if (authUser) {
+        // Nếu người dùng đã đăng nhập, lấy thông tin người dùng từ Firestore
+        firestore().collection('users').doc(authUser.uid).get().then(doc => {
+          if (doc.exists) {
+            setUser(doc.data() as User); // Chú ý: Kiểm tra null trước khi sử dụng
+          } else {
+            console.log('No such document!');
+          }
+        }).catch(error => {
+          console.log('Error getting document:', error);
         });
-    
-        return () => unsubscribe();
-    }, []);
+      } else {
+        setUser(null); // Người dùng không đăng nhập
+      }
+    }, [authUser]);
 
-    const handleLogout = () => {
-        auth().signOut()
-          .then(() => {
-            console.log('User signed out');
-            navigation.navigate('Login');
-          })
-          .catch(error => console.error('Error signing out: ', error));
+    const handleLogout = async () => {
+        const res = await logout();
+        if(res){
+          navigation.navigate('Login');
+        }
     };
 
     const handleCreateProfile = () => {

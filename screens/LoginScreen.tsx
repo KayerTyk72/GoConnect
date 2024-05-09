@@ -1,30 +1,25 @@
 import { NavigationProp } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, TextInput, StyleSheet, Alert, TouchableOpacity, Text } from 'react-native';
-import auth from '@react-native-firebase/auth';
+import { useAuth } from '../contexts/AuthContext';
 
 const LoginScreen : React.FC<{ navigation: NavigationProp<any> }> = ({navigation}) => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const { login } = useAuth(); 
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please enter email and password.');
       return;
     }
-
-    auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(() => {
-        console.log('User signed in successfully!');
-        navigation.navigate('MainBottomTabs');
-      })
-      .catch(error => {
-        console.error('Error signing in: ', error);
-        Alert.alert('Error', 'Failed to sign in. Please check your email and password.');
-      });
+    const res = await login(email, password)
+    if(res){
+      navigation.navigate('MainBottomTabs');
+    } else {
+      Alert.alert('Error', 'Failed to sign in. Please check your email and password.');
+    }
   };
-
 
   function handleGoogleLogin(): void {
   }

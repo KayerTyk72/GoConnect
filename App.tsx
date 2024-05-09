@@ -12,6 +12,7 @@ import EditOrCreateProfileScreen from './screens/User/EditOrCreateProfileScreen'
 
 import { Image } from 'react-native';
 import ProfileInfomation from './screens/Profile/FrofileInfomation';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -27,6 +28,7 @@ function ProfileTabs() {
 }
 
 function MainBottomTabs() {
+  const { authUser } = useAuth();
   return (
     <Tab.Navigator 
       screenOptions={({ route }) => ({
@@ -44,21 +46,23 @@ function MainBottomTabs() {
       })}>
       <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
       <Tab.Screen name="Profile" component={ProfileTabs} options={{ headerShown: false }}/>
-      <Tab.Screen name="Setting" component={SettingScreen} />
+      <Tab.Screen name="Setting" component={SettingScreen} options={{ headerShown: !authUser }}/>
     </Tab.Navigator>
   );
 }
 
 const App: React.FC = () => {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen options={{ headerShown: false }}  name="MainBottomTabs" component={MainBottomTabs}  />
-        <Stack.Screen name="Login" component={LoginScreen}  />
-        <Stack.Screen name="EditOrCreateProfile" component={EditOrCreateProfileScreen}  />
-        <Stack.Screen name="ProfileInfomation" component={ProfileInfomation}  />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen options={{ headerShown: false }}  name="MainBottomTabs" component={MainBottomTabs}  />
+          <Stack.Screen name="Login" component={LoginScreen}  />
+          <Stack.Screen name="EditOrCreateProfile" component={EditOrCreateProfileScreen}  />
+          <Stack.Screen name="ProfileInfomation" component={ProfileInfomation}  />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AuthProvider>
   );
 };
 
