@@ -4,6 +4,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { User } from '../models/user';
 import { useAuth } from '../contexts/AuthContext';
+import UserProfile from '../components/UserProfile';
 
 const SettingScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     const [user, setUser] = useState<User | null>(null);
@@ -38,33 +39,16 @@ const SettingScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     }
     
     return (
-        <View style={styles.container}>
-            {user ? (
-            <>
-                <Text style={{marginBottom: 4}}>Chào {user.name}</Text>
-                <Text style={{marginBottom: 8}}>Role : {user.role}</Text>
-                {user.role === 'user' && <TouchableOpacity
-                  style={[styles.button, styles.message, {marginBottom: 6, width: 150}]} onPress={handleCreateProfile}
-                  >
-                  <Image
-                    style={styles.icon}
-                    source={{ uri: 'https://img.icons8.com/color/70/000000/plus.png' }}
-                  />
-                  <Text style={{ color: 'white' }}> Tạo Profile</Text>
-                </TouchableOpacity>}
-                <TouchableOpacity style={[styles.button, { backgroundColor: '#4b94f8', width: 150}]} onPress={handleLogout}>
-                  <Text style={styles.buttonText}>Logout</Text>
-                </TouchableOpacity>
-            </>
-            ) : (
-            <>
+        <>
+            {user ? <UserProfile user={user} email={authUser?.email || ''} handleLogout={handleLogout} handleCreateProfile={handleCreateProfile} /> : (
+            <View style={styles.container}>
                 <Text style={{marginBottom: 14}}>Vui lòng đăng nhập để sử dụng</Text>
                 <TouchableOpacity style={[styles.button, { backgroundColor: '#4b94f8' }]} onPress={() => navigation.navigate('Login')}>
                   <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
-            </>
+            </View>
             )}
-        </View>
+        </>
     );
 };
 
