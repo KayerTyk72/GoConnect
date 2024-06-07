@@ -5,8 +5,11 @@ import firestore from '@react-native-firebase/firestore';
 import { launchImageLibrary } from 'react-native-image-picker'; 
 import { Profile } from '../../models/Profile';
 import storage from '@react-native-firebase/storage';
+import { Picker } from '@react-native-picker/picker';
+import Ethinicity from '../../models/Ethinicity';
+import Hometown from '../../models/Homtown';
 
-const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = () => {
   const [editable, setEditable] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -18,6 +21,11 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
   const [major,setMajor] = useState('');
   const [school,setScholl] = useState('');
   const [ethinicity,setEthinicity] = useState('');
+  const [nameError, setNameError] = useState(false);
+  const [schoolError, setSchoolError] = useState(false);
+  const [majorError, setMajorError] = useState(false);
+  const [descriptionError, setDescriptionError] = useState(false);
+
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -56,6 +64,23 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
   };
 
   const handleSaveProfile = async () => {
+    if(!name||name.length>30){
+      setNameError(true);
+      return;
+    }else if(!school||school.length>50){
+      setSchoolError(true);
+      return;
+    }else if(!major||major.length>50){
+      setMajorError(true);
+      return;
+    }else if(!description||description.length>300){
+      setDescriptionError(true);
+      return;
+    }else{
+      setNameError(false);
+      setSchoolError(false);
+      setMajorError(false);
+      setDescriptionError(false);
     try {
       let profileData = {
         name: name,
@@ -65,6 +90,9 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
         hometown:hometown,
         school:school,
         major:major,
+      };
+      let userData = {
+        name:name
       };
 
       // upload image lên storage
@@ -80,13 +108,15 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
       // lưu dữ liệu
       if (isCreate) {
         await firestore().collection('profiles').doc(userId).set(profileData, { merge: true });
+        await firestore().collection('users').doc(userId).set(userData, { merge: true });
       } else {
         await firestore().collection('profiles').doc(userId).update(profileData);
-        
+        await firestore().collection('users').doc(userId).update(userData);
       }
       Alert.alert('Profile updated successfully!');
     } catch (error) {
       console.error('Error saving profile:', error);
+    }
     }
   };
 
@@ -105,41 +135,49 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
     <View style={[styles.container, { backgroundColor: '#fff' }]}>
       {/* Profile Image */}
-      {image && <Image source={{ uri: image }} style={{ width: 100, height: 120 ,alignSelf:'center'}} />}
-      <TouchableOpacity style={[styles.button, { backgroundColor: '#4b94f8',width:'30%',alignSelf:'center', }]} onPress={chooseImage}>
+      {image && <Image source={{ uri: image }} style={[styles.image]} />}
+      <TouchableOpacity style={[styles.button, { backgroundColor: '#4b94f8',width:'50%',alignSelf:'center', }]} onPress={chooseImage}>
         <Text style={styles.buttonText}>Choose Image</Text>
       </TouchableOpacity>
       {/* Profile Name */}
-      <Text style={{ marginBottom: 5 }}>Name:</Text>
+      <Text style={[styles.label]}>Name:{nameError && <Text style={[styles.alert]}>(* Tên không được để trống hoặc quá 30 ký tự)</Text>}</Text>
       <TextInput
         style={styles.input}
         value={name}
         onChangeText={text => setName(text)}
         placeholder="Enter name"
         editable={editable}
-      />
+      /> 
       <Text/>
       {/* Profile DayOfBirth
       {/* Profile homtown */}
-      <Text style={{marginBottom:5}}>Quê quán:</Text>
-      <TextInput
+      <Text style={[styles.label]}>Quê quán:</Text>
+      <Picker
+        selectedValue={hometown}
+        onValueChange={(itemValue) => setHomeTown(itemValue)}
         style={styles.input}
-        value={hometown}
-        onChangeText={text => setHomeTown(text)}
-        placeholder="Quê quán"
-        editable={editable}
-      />
+        enabled={editable}
+      >
+        {Hometown.map((item, index) => (
+          <Picker.Item key={index} label={item} value={item} />
+        ))}
+      </Picker>
       {/* Profile ethinicity */}
-      <Text style={{marginBottom:5}}>Sắc tộc:</Text>
-      <TextInput
+      <Text style={[styles.label]}>Sắc tộc:</Text>
+      <Picker
+        selectedValue={ethinicity}
+        onValueChange={(itemValue) => setEthinicity(itemValue)}
         style={styles.input}
-        value={ethinicity}
-        onChangeText={text => setEthinicity(text)}
-        placeholder="Sắc tộc"
-        editable={editable}
-      />
+        enabled={editable}
+      >
+        {Ethinicity.map((item, index) => (
+          <Picker.Item key={index} label={item} value={item} />
+        ))}
+      </Picker>
+
+
       {/* Profile school */}
-      <Text style={{marginBottom:5}}>Trường học:</Text>
+      <Text style={[styles.label]}>Trường học:{schoolError && <Text style={[styles.alert]}>(* Trường học không được để trống)</Text>}      </Text>
       <TextInput
         style={styles.input}
         value={school}
@@ -148,7 +186,7 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
         editable={editable}
       />
       {/* Profile major */}
-      <Text style={{marginBottom:5}}>Chuyên ngành:</Text>
+      <Text style={[styles.label]}>Chuyên ngành:</Text>
       <TextInput
         style={styles.input}
         value={major}
@@ -156,8 +194,9 @@ const EditOrCreateProfileScreen: React.FC<{ navigation: any }> = ({ navigation }
         placeholder="Chuyên ngành"
         editable={editable}
       />
+      {majorError && <Text style={[styles.alert]}>(* Chuyên ngành không được để trống)</Text>}
       {/* Profile Description */}
-      <Text style={{ marginBottom: 5 }}>Description:</Text>
+      <Text style={[styles.label]}>Description:{descriptionError && <Text style={[styles.alert]}>(* Thông tin không được để trống)</Text>}</Text>
       <TextInput
         multiline={true}
         numberOfLines={5}
@@ -188,6 +227,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20
+  },
+  alert:{
+    color: 'red',
+    marginBottom: 5 
+  },
+  image:{
+    width: 200,
+    height: 300,
+    alignSelf:'center'
+  },
+  label:{
+    marginBottom:5,
+    fontWeight:'bold',
+    color:'black'
   },
   input: {
     padding: 10,

@@ -7,6 +7,7 @@ import { Profile } from '../../models/Profile';
 import storage from '@react-native-firebase/storage';
 import { opacity } from 'react-native-reanimated/lib/typescript/reanimated2/Colors';
 
+
 const ProfileInfomation: React.FC<{ navigation: any;route:any }> = ({ navigation,route }) => {
   const [userId,setUserId] = useState('');
   const [name,setName] = useState('');
@@ -53,13 +54,12 @@ const ProfileInfomation: React.FC<{ navigation: any;route:any }> = ({ navigation
     }
   };
 
-
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
     <View style={[styles.container, { backgroundColor: '#fff' }]}>
         <View style={{flexDirection:'row',marginBottom:30}}>
             <View style={{flex:2}}>
-                {image && <Image source={{ uri: image }} style={{ width: 200, height: 240,alignSelf:'center'}} />}
+                {image && <Image source={{ uri: image }} style={[styles.profileImg]} />}
             </View>
             <View style={{flex:2,marginLeft:40}}>
                 <Text style={{textAlign:'center',fontWeight:'bold',fontSize:20,marginBottom:10}}>Thông tin cá nhân</Text>
@@ -72,8 +72,8 @@ const ProfileInfomation: React.FC<{ navigation: any;route:any }> = ({ navigation
             </View>
         </View>
         <View>
-            <Text style={{textAlign:'center',fontWeight:'bold',fontSize:20,marginBottom:10}}>Tóm tắt về bản thân</Text>
-            <Text style={{fontSize:15}}>{description}</Text>
+            <Text style={[styles.profileDescription]}>Tóm tắt về bản thân</Text>
+            <Text style={[styles.infomation]}>{description}</Text>
         </View>
     </View>
     </ScrollView>
@@ -85,6 +85,16 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     paddingTop:40,
+  },
+  profileDescription:{
+    textAlign:'center',
+    fontWeight:'bold',
+    fontSize:20,
+    marginBottom:10
+  },
+  profileImg:{
+    height:240,
+    width:150
   },
   infomation:{
     marginBottom:10,

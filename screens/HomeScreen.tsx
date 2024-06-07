@@ -122,7 +122,9 @@ const styles =  StyleSheet.create({
     marginHorizontal: 16,
     ...boxShadow,
   },
-  imageContainer: {flex: 1},
+  imageContainer: {
+    flex: 1
+  },
   image: {
     flex: 1,
     borderRadius: 20,
